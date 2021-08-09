@@ -18,5 +18,5 @@ Only support linux now
 
 1. Single Text:- **Send a single text to a single person** 
 2. Single Image:- **Send a single image with a caption to a single contact**
-3. Bulk Text:- **Read contact no. form a .txt file and send same text to all of them**
-4. Bulk Image:- **Read contact no. form a .txt file and send same image with to all of them**
+3. Bulk Text:- **Read contact no. form a .txt('contacts.txt' in same folder) file and send same text to all of them**
+4. Bulk Image:- **Read contact no. form a .txt('contacts.txt' in same folder) file and send same image with caption to all of them**
