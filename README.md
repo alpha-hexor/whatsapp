@@ -14,8 +14,8 @@ Connect to whatsapp web to the default browser atleast one time and the browser 
 3. ``sudo pip3 install urllib3``
 4. ``sudo apt-get install xclip``
 ## Additional Packages for linux(optional)
-1. ``sudo pip3 install python3-tk``
-2. ``sudo pip3 install python3-dev``
+1. ``sudo apt-get install python3-tk``
+2. ``sudo apt-get install python3-dev``
 
 ## Package install for windows
 1. ``pip install pyautogui``
