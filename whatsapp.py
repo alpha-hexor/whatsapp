@@ -30,7 +30,7 @@ def single_sms():
     
     width,height=p.size()
     
-    #click in the message box
+    #click in the message area
     p.click(width/2,height/2)
     time.sleep(3)
 
@@ -61,24 +61,40 @@ def single_image():
     '''
     for linux
     '''
-    if full_path.split("/")[-1].split(".")[1] in pn:
-        os.system("xclip -selection clipboard -target image/png -i " + full_path)
-    elif full_path.split("/")[-1].split(".")[1] in jp:
-    	'''
-    	convert it in png and then use it 
-    	'''
-    	file_name = full_path.split("/")[-1].split(".")[0]
-    	image_path = os.getcwd()+"/"+file_name+".png"
-	#image_path = os.getcwd()+"/"+file_name+".png"    	
-    	img1 = Image.open(full_path)
-    	img1.save(image_path)
-    	os.system("xclip -selection clipboard -target image/png -i " + image_path)
-    	
- 
+    if system().lower() == "linux":
         
-    else:
-        print("[*]Wrong format")
-        exit()
+        if full_path.split("/")[-1].split(".")[1] in pn:
+            os.system("xclip -selection clipboard -target image/png -i " + full_path)
+        elif full_path.split("/")[-1].split(".")[1] in jp:
+            '''
+            convert it in png and then use it 
+            '''
+            file_name = full_path.split("/")[-1].split(".")[0]
+            image_path = os.getcwd()+"/"+file_name+".png"
+        
+            img1 = Image.open(full_path)
+            img1.save(image_path)
+            os.system("xclip -selection clipboard -target image/png -i " + image_path)
+        else:
+            print("[*]Wrong Format")
+            exit()
+    '''
+    for windows
+    '''
+    if system().lower() == "windows":
+        import win32clipboard
+        from io import BytesIO
+
+        image = Image.open(full_path)
+        output = BytesIO()
+        image.convert('RGB').save(output, "BMP")
+        data = output.getvalue()[14:]
+        output.close()
+        win32clipboard.OpenClipboard()
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
+        win32clipboard.CloseClipboard()
+        time.sleep(2)
     #to paste the image
     p.hotkey("ctrl","v")
     time.sleep(4)
@@ -89,88 +105,112 @@ def single_image():
 
 def bulk_sms():
 
-	'''
-	Function to send same message to mulitple contacts
-	'''
+    '''
+    Function to send same message to mulitple contacts
+    '''
 
-	phones = []
-	with open('contacts.txt','r') as f:
+    phones = []
+    with open('contacts.txt','r') as f:
 
-		for line in f.readlines():
-			number = line.strip("\n")
-			phones.append(number)
-	f.close()
-	msg = str(input("[*]Enter message here: "))
-	parsed_message = quote(msg)
-	for phone in phones:
-		wb.open("https://web.whatsapp.com/send?phone="+phone+"&text="+parsed_message)
-		
-		time.sleep(6) # time to get it load
-		width,height = p.size()
-		
-		#click in the message box
-		p.click(width/2,height/2)
-		time.sleep(3)
-		
-		#press enter to send
-		p.press('enter')
-		
-		time.sleep(3)
-		
-		#close current tab
-		close_tab()
-		time.sleep(7)
-    		
-	
+        for line in f.readlines():
+            number = line.strip("\n")
+            phones.append(number)
+    f.close()
+    msg = str(input("[*]Enter message here: "))
+    parsed_message = quote(msg)
+    for phone in phones:
+        wb.open("https://web.whatsapp.com/send?phone="+phone+"&text="+parsed_message)
+        
+        time.sleep(6) # time to get it load
+        width,height = p.size()
+        
+        #click in the message area
+        p.click(width/2,height/2)
+        time.sleep(3)
+        
+        #press enter to send
+        p.press('enter')
+        
+        time.sleep(3)
+        
+        #close current tab
+        close_tab()
+        time.sleep(7)
+            
+    
 def bulk_img():
-	'''
-	Function to send same image multiple ppl
-	'''
-	phones=[]
-	with open('contacts.txt','r') as f:
-		for line in f.readlines():
-			number =line.strip("\n")
-			phones.append(number)
-	f.close()
-	caption = str(input("[*]Enter caption: "))
-	full_path = str(input("[*]Enter full image path: "))
-	if not os.path.exists(full_path):
-		print("[*]Wrong path")
-		exit()
-	#convert it if needed and load it in clip board
-	if full_path.split("/")[-1].split(".")[1] in jp:
-		file_name = full_path.split("/")[-1].split(".")[0]
-		image_path = os.getcwd()+"/"+file_name+".png"
-		img1 = Image.open(full_path)
-		img1.save(image_path)
-		full_path = image_path
-	'''
-	for linux
-	'''
-	os.system("xclip -selection clipboard -target image/png -i " + full_path)
-		
-		
-	for phone in phones:
-		
-		wb.open('https://web.whatsapp.com/send?phone=' + phone + '&text=' + caption)
-		time.sleep(8) # to get it load
-		
-		#paste it
-		p.hotkey("ctrl","v")
-		
-		time.sleep(4)
-		
-		#press enter
-		p.press('enter')
-		time.sleep(12) #time to send it
-		
-		close_tab()
-		time.sleep(9)
-		
-		
-			
-		
-		   
+    '''
+    Function to send same image multiple ppl
+    '''
+    phones=[]
+    with open('contacts.txt','r') as f:
+        for line in f.readlines():
+            number =line.strip("\n")
+            phones.append(number)
+    f.close()
+    caption = str(input("[*]Enter caption: "))
+    full_path = str(input("[*]Enter full image path: "))
+    if not os.path.exists(full_path):
+        print("[*]Wrong path")
+        exit()
+    '''
+    for linux
+    '''
+    if system().lower() == "linux":
+        #convert it if needed and load it in clip board
+        if full_path.split("/")[-1].split(".")[1] in jp:
+            file_name = full_path.split("/")[-1].split(".")[0]
+            image_path = os.getcwd()+"/"+file_name+".png"
+            img1 = Image.open(full_path)
+            img1.save(image_path)
+            full_path = image_path
+        #if not valid
+        if full_path.split("/")[-1].split(".")[1] not in jp and full_path.split("/")[-1].split(".")[1] not in pn:
+            print("[*]Wrong Format")
+            exit()
+        
+        os.system("xclip -selection clipboard -target image/png -i " + full_path)
+
+    '''
+    for windows
+    '''
+    if system().lower() == "windows":
+        import win32clipboard
+        from io import BytesIO
+        
+        image = Image.open(full_path)
+        output = BytesIO()
+        image.convert('RGB').save(output, "BMP")
+        data = output.getvalue()[14:]
+        output.close()
+        win32clipboard.OpenClipboard()
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
+        win32clipboard.CloseClipboard()
+        time.sleep(2)
+        
+        
+    for phone in phones:
+        
+        wb.open('https://web.whatsapp.com/send?phone=' + phone + '&text=' + caption)
+        time.sleep(8) # to get it load
+        
+        #paste it
+        p.hotkey("ctrl","v")
+        
+        time.sleep(4)
+        
+        #press enter
+        p.press('enter')
+        time.sleep(12) #time to send it
+        
+        close_tab()
+        time.sleep(9)
+        
+        
+            
+        
+           
 
 def print_menu():
     print("[*]Press 1 to send single text")
